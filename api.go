@@ -72,7 +72,7 @@ var (
 
 func (c *Client) GetByHltbId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(apiUrl+"/hltb/%d", id), &game); err != nil {
+	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/hltb/%d", id), &game); err != nil {
 		return nil, err
 	}
 	return &game, nil
@@ -80,7 +80,7 @@ func (c *Client) GetByHltbId(ctx context.Context, id uint64) (*GameEntry, error)
 
 func (c *Client) RefreshByHltbId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(apiUrl+"/hltb/%d/refresh", id), &game); err != nil {
+	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/hltb/%d/refresh", id), &game); err != nil {
 		return nil, err
 	}
 	return &game, nil
@@ -102,7 +102,7 @@ func (c *Client) SearchByGameTitle(ctx context.Context, searchTerm string, optio
 	}
 
 	var games []GameEntry
-	if err := c.post(ctx, apiUrl+"/hltb/search", req, &games); err != nil {
+	if err := c.post(ctx, c.baseUrl+"/hltb/search", req, &games); err != nil {
 		return nil, err
 	}
 	return games, nil
@@ -110,7 +110,7 @@ func (c *Client) SearchByGameTitle(ctx context.Context, searchTerm string, optio
 
 func (c *Client) GetBySteamAppId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(apiUrl+"/steam/%d", id), &game); err != nil {
+	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/steam/%d", id), &game); err != nil {
 		return nil, err
 	}
 	return &game, nil
@@ -118,7 +118,7 @@ func (c *Client) GetBySteamAppId(ctx context.Context, id uint64) (*GameEntry, er
 
 func (c *Client) GetByGogAppId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(apiUrl+"/gog/%d", id), &game); err != nil {
+	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/gog/%d", id), &game); err != nil {
 		return nil, err
 	}
 	return &game, nil

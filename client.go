@@ -9,7 +9,7 @@ import (
 	"resty.dev/v3"
 )
 
-const defaultTimeout = 10 * time.Second
+const defaultTimeout = 30 * time.Second
 
 type Client struct {
 	clientOpts
@@ -19,12 +19,14 @@ type Option func(opts *clientOpts)
 
 type clientOpts struct {
 	client  *resty.Client
+	baseUrl string
 	timeout time.Duration
 }
 
 func defaultOpts() clientOpts {
 	return clientOpts{
 		client:  resty.New(),
+		baseUrl: apiUrl,
 		timeout: defaultTimeout,
 	}
 }
@@ -40,6 +42,14 @@ func WithTimeout(timeout int) Option {
 func WithRetryCount(count int) Option {
 	return func(opts *clientOpts) {
 		opts.client.SetRetryCount(count)
+	}
+}
+
+func WithBaseUrl(baseUrl string) Option {
+	return func(opts *clientOpts) {
+		if baseUrl != "" {
+			opts.baseUrl = baseUrl
+		}
 	}
 }
 
