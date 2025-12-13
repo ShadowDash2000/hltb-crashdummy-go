@@ -2,6 +2,7 @@ package hltb
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -68,19 +69,41 @@ var (
 	XboxSeriesXS     Platform = "Xbox Series X/S"
 )
 
+var ErrNotFound = errors.New("hltb: game not found")
+
 func (c *Client) GetByHltbId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/hltb/%d", id), &game); err != nil {
+	res, err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/hltb/%d", id), &game)
+	if err != nil {
 		return nil, err
 	}
+
+	if res.IsError() {
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("hltb.GetByHltbId(): %s, status code = %d", res.String(), res.StatusCode())
+	}
+
 	return &game, nil
 }
 
 func (c *Client) RefreshByHltbId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/hltb/%d/refresh", id), &game); err != nil {
+	res, err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/hltb/%d/refresh", id), &game)
+	if err != nil {
 		return nil, err
 	}
+
+	if res.IsError() {
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("hltb.RefreshByHltbId(): %s, status code = %d", res.String(), res.StatusCode())
+	}
+
 	return &game, nil
 }
 
@@ -100,24 +123,54 @@ func (c *Client) SearchByGameTitle(ctx context.Context, searchTerm string, optio
 	}
 
 	var games []GameEntry
-	if err := c.post(ctx, c.baseUrl+"/hltb/search", req, &games); err != nil {
+	res, err := c.post(ctx, c.baseUrl+"/hltb/search", req, &games)
+	if err != nil {
 		return nil, err
 	}
+
+	if res.IsError() {
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("hltb.SearchByGameTitle(): %s, status code = %d", res.String(), res.StatusCode())
+	}
+
 	return games, nil
 }
 
 func (c *Client) GetBySteamAppId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/steam/%d", id), &game); err != nil {
+	res, err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/steam/%d", id), &game)
+	if err != nil {
 		return nil, err
 	}
+
+	if res.IsError() {
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("hltb.GetBySteamAppId(): %s, status code = %d", res.String(), res.StatusCode())
+	}
+
 	return &game, nil
 }
 
 func (c *Client) GetByGogAppId(ctx context.Context, id uint64) (*GameEntry, error) {
 	var game GameEntry
-	if err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/gog/%d", id), &game); err != nil {
+	res, err := c.get(ctx, fmt.Sprintf(c.baseUrl+"/gog/%d", id), &game)
+	if err != nil {
 		return nil, err
 	}
+
+	if res.IsError() {
+		if res.StatusCode() >= 400 && res.StatusCode() < 500 {
+			return nil, ErrNotFound
+		}
+
+		return nil, fmt.Errorf("hltb.GetByGogAppId(): %s, status code = %d", res.String(), res.StatusCode())
+	}
+
 	return &game, nil
 }

@@ -2,7 +2,6 @@ package hltb
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -73,39 +72,21 @@ func (c *Client) Client() *resty.Client {
 	return c.client
 }
 
-func (c *Client) get(ctx context.Context, url string, output any) error {
-	res, err := c.client.R().
+func (c *Client) get(ctx context.Context, url string, output any) (*resty.Response, error) {
+	return c.client.R().
 		SetHeader("Accept", "application/json").
 		SetContext(ctx).
 		SetTimeout(c.timeout).
 		SetResult(output).
 		Execute(http.MethodGet, url)
-	if err != nil {
-		return err
-	}
-
-	if res.IsError() {
-		return fmt.Errorf("hltb.get(): %s, status code = %d", res.String(), res.StatusCode())
-	}
-
-	return nil
 }
 
-func (c *Client) post(ctx context.Context, url string, input any, output any) error {
-	res, err := c.client.R().
+func (c *Client) post(ctx context.Context, url string, input any, output any) (*resty.Response, error) {
+	return c.client.R().
 		SetHeader("Accept", "application/json").
 		SetContext(ctx).
 		SetTimeout(c.timeout).
 		SetBody(input).
 		SetResult(output).
 		Execute(http.MethodPost, url)
-	if err != nil {
-		return err
-	}
-
-	if res.IsError() {
-		return fmt.Errorf("hltb.post(): %s, status code = %d", res.String(), res.StatusCode())
-	}
-
-	return nil
 }
