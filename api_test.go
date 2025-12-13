@@ -1,4 +1,4 @@
-package hltb_crashdummy_go
+package hltb
 
 import (
 	"context"
