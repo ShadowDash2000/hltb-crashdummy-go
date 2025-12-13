@@ -4,21 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
 type (
 	GameEntry struct {
-		Id                  uint64    `json:"id"`
-		HltbId              uint64    `json:"hltbId"`
-		Title               string    `json:"title"`
-		ImageUrl            string    `json:"imageUrl"`
-		SteamAppId          uint64    `json:"steamAppId"`
-		GogAppId            uint64    `json:"gogAppId"`
-		MainStory           float64   `json:"mainStory"`
-		MainStoryWithExtras float64   `json:"mainStoryWithExtras"`
-		Completionist       float64   `json:"completionist"`
-		LastUpdatedAt       time.Time `json:"lastUpdatedAt"`
+		Id                  uint64   `json:"id"`
+		HltbId              uint64   `json:"hltbId"`
+		Title               string   `json:"title"`
+		ImageUrl            string   `json:"imageUrl"`
+		SteamAppId          uint64   `json:"steamAppId"`
+		GogAppId            uint64   `json:"gogAppId"`
+		MainStory           float64  `json:"mainStory"`
+		MainStoryWithExtras float64  `json:"mainStoryWithExtras"`
+		Completionist       float64  `json:"completionist"`
+		LastUpdatedAt       JSONTime `json:"lastUpdatedAt"`
 	}
 
 	TermMatchType int
@@ -68,6 +69,32 @@ var (
 	XboxOne          Platform = "Xbox One"
 	XboxSeriesXS     Platform = "Xbox Series X/S"
 )
+
+type JSONTime struct {
+	time.Time
+}
+
+func (jt *JSONTime) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), "\"")
+	if s == "null" {
+		jt.Time = time.Time{}
+		return nil
+	}
+
+	t, err := time.Parse(time.RFC3339, s)
+	if err == nil {
+		jt.Time = t
+		return nil
+	}
+
+	t, err = time.Parse("2006-01-02T15:04:05.999999999", s)
+	if err == nil {
+		jt.Time = t
+		return nil
+	}
+
+	return err
+}
 
 var ErrNotFound = errors.New("hltb: game not found")
 
