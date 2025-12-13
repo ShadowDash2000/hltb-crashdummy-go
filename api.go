@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-const apiUrl = "https://hltbapi1.azurewebsites.net"
-
 type (
 	GameEntry struct {
 		Id                  uint64    `json:"id"`

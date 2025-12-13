@@ -9,7 +9,10 @@ import (
 	"resty.dev/v3"
 )
 
-const defaultTimeout = 30 * time.Second
+const (
+	apiUrl         = "https://hltbapi.codepotatoes.de"
+	defaultTimeout = 30 * time.Second
+)
 
 type Client struct {
 	clientOpts
