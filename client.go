@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"golang.org/x/time/rate"
 	"resty.dev/v3"
 )
 
@@ -44,6 +45,15 @@ func WithTimeout(timeout int) Option {
 func WithRetryCount(count int) Option {
 	return func(opts *clientOpts) {
 		opts.client.SetRetryCount(count)
+	}
+}
+
+func WithRateLimit(r time.Duration, b int) Option {
+	limiter := rate.NewLimiter(rate.Every(r), b)
+	return func(opts *clientOpts) {
+		opts.client.AddRequestMiddleware(func(client *resty.Client, request *resty.Request) error {
+			return limiter.Wait(request.Context())
+		})
 	}
 }
 
